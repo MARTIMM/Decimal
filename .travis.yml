@@ -1,0 +1,18 @@
+branches:
+  only:
+    - master
+#    - develop
+
+language: perl6
+
+perl6:
+  - latest
+
+install:
+  - rakudobrew build-zef ${TRAVIS_PERL6_VERSION#latest}
+  - zef --depsonly install .
+
+#cache:
+#  directories:
+#    - $HOME/Travis-ci
+#    - $HOME/.rakudobrew

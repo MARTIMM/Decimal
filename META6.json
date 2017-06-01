@@ -1,0 +1,18 @@
+{
+  "authors": [
+    "Marcel Timmerman"
+  ],
+  "depends": [
+  ],
+  "description": "Decimal encoding as densely packed decimal",
+  "license": "Artistic-2.0",
+  "name": "Decimal",
+  "provides": {
+    "Decimal":                  "lib/Decimal.pm6",
+    "Decimal::Dxxx":            "lib/Decimal/Dxxx.pm6",
+    "Decimal::D128":            "lib/Decimal/D128.pm6"
+  },
+  "source-url": "git://github.com/MARTIMM/Decimal.git",
+  "perl": "6",
+  "version": "0.0.1"
+}

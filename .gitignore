@@ -1,0 +1,14 @@
+.directory
+*.html
+benchmarks/*
+Old/*
+*.mbc
+*/*.mbc
+.precomp
+*/.precomp
+*.log
+
+xt/decNumber/*
+xt/dfpal/*
+xt/d128-v[1-9]
+xt/e*
