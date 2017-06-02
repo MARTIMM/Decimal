@@ -28,16 +28,24 @@ All constants and subs are going into the package **Decimal**. The common routin
 
 ### Todo priority list
 
-* encode decimal string to BCD. One digit per nibble or one digit per byte.
-* encode BCD (one digit per byte) into densely packed decimal (DPD).
-* encoding Decimal types into Buf.
-* decoding Buf into Decimal types.
+* [x] reading from FatRat, Rat and Num type numbers
+* [x] reading from string with parsing
+* [x] output to FatRat, Rat and Num type numbers
+* [x] output to string
+* [x] test for definedness and 0 with Bool
+* [x] encode from decmal string to BCD in a nibble or byte
+* [ ] decode from BCD in a nibble or byte to decimal string
+* [x] encode BCD (one digit per byte) into densely packed decimal (DPD).
+* [ ] decode DPD to BCD
+* [ ] encoding 128 bit decimal type into Buf.
+* [ ] decoding Buf into 128 bit decimal type.
 
 ### Todo list for later additions
 
-* support for other Decimal types such as 32 and 64 bit variants.
-* make use of c-library from spelotrove. Now it is used to check the resulting formats.
-* add arithmetic operations.
+* [ ] support for Decimal 32 bit type.
+* [ ] support for Decimal 64 bit type.
+* [ ] make use of c-library from spelotrove. Now it is used to check the resulting formats.
+* [ ] add arithmetic operations.
 
 
 ## Bugs
