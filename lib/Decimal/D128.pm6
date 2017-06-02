@@ -61,11 +61,7 @@ class D128 does Decimal::Dxxx {
     # all other finite cases
     else {
       # store number an get string representation then remove trailing spaces
-      if $!string-set {
-        # parse its parts
-      }
-
-      else {
+      unless $!string-set {
         $!string = $!number.fmt('%34.34f');
         $!string ~~ s/ '0'+ $ // if $!string.index('.');
       }
@@ -102,7 +98,6 @@ note "ex 0: $exponent";
 
       $adj-exponent += Decimal::C-BIAS-D128;
 
-note "coeff 1: $coefficient";
 note "ex 1: $adj-exponent";
 
       # Check number of characters in coefficient
@@ -114,7 +109,9 @@ note "ex 1: $adj-exponent";
 
 
       # Get the coefficient. The MSByte is at the end of the array
-      self.bcd2dpd(self.bcd8($coefficient));
+note "coeff 1: $coefficient";
+      self.bcd8($coefficient);
+      self.bcd2dpd;
 note 'dpd: ', $!dpd;
 
       # Copy 13 bytes and 6 bits into the result, a total of 110 bits

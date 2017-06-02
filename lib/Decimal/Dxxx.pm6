@@ -4,6 +4,8 @@ use v6;
 unit package Decimal:auth<github:MARTIMM>;
 
 use Decimal;
+use Decimal::Actions;
+use Decimal::Grammar;
 
 #------------------------------------------------------------------------------
 role Dxxx:auth<github:MARTIMM> {
@@ -67,15 +69,46 @@ role Dxxx:auth<github:MARTIMM> {
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # init using string
   multi submethod BUILD ( Str:D :str($!string)! ) {
-    $!is-inf = $!is-nan = False;
-    $!number = $!string.FatRat;
-    $!string-set = True;
+    $!is-inf = $!is-nan = $!string-set = False;
+
+    my Decimal::Actions $a .= new;
+    my Decimal::Grammar $g .= new;
+    my Match $m = $g.parse( $!string, :rule<dxxx>, :actions($a));
+
+    if $m.defined {
+      if $!string ~~ any( 'Inf', '-Inf') {
+        $!is-inf = True;
+        my Bool $minus = ?($!string ~~ m/^ '-' /);
+        $!number .= new( $minus ?? -1 !! 1, 1);
+      }
+
+      elsif $!string ~~ any( 'NaN', '-NaN') {
+        my Bool $minus = ?($!string ~~ m/^ '-' /);
+        $!number .= new( $minus ?? -1 !! 1, 1);
+        $!is-nan = True;
+      }
+
+      else {
+        $!string ~= '0' if $!string ~~ / '.' $/;
+        $!number = $!string.FatRat;
+      }
+
+      $!string-set = True;
+    }
+
+    else {
+      $!is-nan = True;
+    }
   }
 
   #----------------------------------------------------------------------------
   # return string representation for string concatenation
   method Str ( --> Str ) {
-    if self.defined and ?$!number {
+    if $!string-set {
+      $!string;
+    }
+
+    elsif self.defined and ?$!number {
       $!number.Str;
     }
 
