@@ -1,1 +1,0 @@
-# Bugs and Todo motes
