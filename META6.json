@@ -3,6 +3,7 @@
     "Marcel Timmerman"
   ],
   "depends": [
+    "Test::META"
   ],
   "description": "Decimal encoding as densely packed decimal",
   "license": "Artistic-2.0",
@@ -10,9 +11,11 @@
   "provides": {
     "Decimal":                  "lib/Decimal.pm6",
     "Decimal::Dxxx":            "lib/Decimal/Dxxx.pm6",
-    "Decimal::D128":            "lib/Decimal/D128.pm6"
+    "Decimal::D128":            "lib/Decimal/D128.pm6",
+    "Decimal::Actions":         "lib/Decimal/Actions.pm6",
+    "Decimal::Grammar":         "lib/Decimal/Grammar.pm6"
   },
   "source-url": "git://github.com/MARTIMM/Decimal.git",
   "perl": "6",
-  "version": "0.0.1"
+  "version": "0.2.0"
 }
