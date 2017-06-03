@@ -1,15 +1,12 @@
-# 128 bit decimal type
+# Decimal type
 
-It is difficult to find any test layouts to see if the encoding is done right. First a try is made using the _Decimal128 type in C supported by gcc. This type however is a Binary Integer Decimal (BID) which is not the proper one to compare with because the BSON type must be a Densely Packed Decimal(DPD).
+It is difficult to find any test layouts to see if the encoding is done right. First a try is made using the _Decimal128 type in C supported by gcc. This type however is a Binary Integer Decimal (BID) which is not the proper one to compare with because the BSON type must be a Densely Packed Decimal(DPD). This, however, might come in handy later when the BID type will be supported too.
 
 Much information is found about how to procede;
-* [From MongoDB]( https://github.com/mongodb/specifications/blob/master/source/bson-decimal128/decimal128.rst#terminology)
-
-* [Decimal implementation and libraries](http://speleotrove.com/decimal/)
-* [Wiki DPD howto](https://en.wikipedia.org/wiki/Densely_packed_decimal)
-* [The "Decimal Floating Point C Library" User's Guide](Guidehttps://raw.githubusercontent.com/libdfp/libdfp/master/README.user)
-
-
+* [From MongoDB][mdb]
+* [Decimal implementation and libraries][spelotrove]
+* [Wiki DPD howto][wiki]
+* [The "Decimal Floating Point C Library" User's Guide][libdpd]
 
 ### Densely packed decimal encoding rules
 
@@ -67,9 +64,52 @@ bytes d2,d1,d0   bits           d*
 
 ```
 
-## Libraries
+### Libraries
 * download zipfile DFPALL unzip and go into directory dfpal
 * (on linux) open Makefile.Linux and add option **-fPIC** to the **OPT_CFLAGS**
 * run `make -f Makefile.Linux`
 * set environment variable **LD_LIBRARY_PATH** to **dfpal** directory.
 * make your own program using the lib (example in xt/d128-v1.c)
+
+From this a program `d128-v1` is made to check the layout of a decimal 128 bit
+Some examples;
+```
+$ xt/d128-v1 .001
+N = .001
+   0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+   0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x07, 0x22,
+
+$ xt/d128-v1 10
+N = 10
+   0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x22,
+
+$ xt/d128-v1 1e1
+N = 1e1
+   0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+   0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x08, 0x22,
+
+$ xt/d128-v1 10e-1
+N = 10e-1
+   0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+   0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x07, 0x22,
+```
+
+### Precision of digits
+The following numbers have the same precision `1`, `0.1`, `0.001`, `1e1` etc.
+as well as `101`, `1.01` or `0.000101e-10`
+Different are `1` and `10` or `1e1` and `10`.
+
+| n    | char | adj char | mantissa | adj mant | precision | exponent | adj exp |
+|------|------|----------|----------|----------|-----------|----------|---------|
+| 1001 | 1001 | | | | 4 | 0 | 0 |
+| 0.0012 | | 12 | 0012 | | 2 | 0 | -4 |
+| 11.02 | 11 | 1102 | 02 | | 4 | 0 | 2 |
+| 100 | 100 | 100 | | | 3 | 0 | 0 |
+| 1.02e2 | 1 | 102 | 02 | | 3 | 2 | 0 |
+
+
+[mdb]: https://github.com/mongodb/specifications/blob/master/source/bson-decimal128/decimal128.rst
+[spelotrove]: http://speleotrove.com/decimal/
+[wiki]: https://en.wikipedia.org/wiki/Densely_packed_decimal
+[libdpd]: https://raw.githubusercontent.com/libdfp/libdfp/master/README.user

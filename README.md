@@ -24,7 +24,7 @@ Implements Densely Packed Decimal (**DPD**) for 128 bit Decimal types. Future ma
 
 ### Markdown
 
-The markdown documents are written with the **Atom** plugin **markdown-preview-enhanced**. The default markdown viewer is disabled. This gives all sorts of possibilities such as showing UML and Gantt charts. When not readable, one can look into the `pdf` documents in the `doc` directory.
+The markdown documents are written with the **Atom** plugin **markdown-preview-enhanced**. The default markdown viewer is disabled. This gives all sorts of possibilities such as showing UML and Gantt charts. When the document doesn't show some graphics, then look for the `pdf` documents in the `doc` directory.
 
 
 ## Installing Decimal
