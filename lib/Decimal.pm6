@@ -1,5 +1,6 @@
 use v6;
 
+#-------------------------------------------------------------------------------
 unit package Decimal:auth<github:MARTIMM>;
 
 constant C-ZERO-ORD = '0'.ord;
@@ -23,3 +24,8 @@ constant C-ELIMIT-D128 = 12287;
 constant C-BIAS-D128 = 6176;
 
 #constant C--D128 = ;
+
+#-------------------------------------------------------------------------------
+enum endianness <little-endian big-endian system-endian>;
+
+our $endian = little-endian;
