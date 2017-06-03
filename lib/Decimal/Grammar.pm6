@@ -23,13 +23,19 @@ use Decimal;
 }}
 
 grammar Grammar {
-  rule dxxx { <numeric-string> }
+  rule dxxx { <.initialize> <numeric-string> }
+  rule initialize { <?> }
 
   token sign { <[+-]> }
   token indicator { <[eE]> }
   token digits { \d+ }
-  token decimal-part { <digits> '.' <digits>? || '.'? <digits> }
-  token exponent-part { <indicator> <sign>?  <digits> }
+  token decimal-part {
+    $<characteristic>=<.digits> '.' $<mantissa>=<.digits>? ||
+    '.' $<mantissa>=<.digits> ||
+    $<characteristic>=<.digits>
+  }
+
+  token exponent-part { <.indicator> <sign>? $<exponent>=<.digits> }
   token infinity { 'Infinity' || 'Inf' }
   token nan { 'NaN' }
   token numeric-value { <decimal-part> <exponent-part>? || <infinity> }
