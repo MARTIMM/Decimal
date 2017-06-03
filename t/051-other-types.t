@@ -6,14 +6,13 @@ use Decimal::Dxxx;
 my class X does Decimal::Dxxx { }
 
 #-------------------------------------------------------------------------------
-subtest 'init decimal128 nummerator/denominator', {
+subtest 'init decimal with nummerator/denominator', {
   my X $dxxx .= new( 2, 4);
   isa-ok $dxxx, X;
 
   like ~$dxxx, /^ '0.5' /, 'can be coersed to string';
   is $dxxx * 2.3, 1.15, 'calculations can be done directly';
-  ok ($dxxx * 2.3) ~~ FatRat, 'type of calculation is FatRat';
-
+  ok (+$dxxx * 2.3) ~~ FatRat, 'type of calculation is FatRat';
   ok +$dxxx ~~ FatRat, 'object coersed to return FatRat';
   is-approx (cos +$dxxx), 0.877582, 'cosine on coersed object';
 
@@ -25,7 +24,7 @@ subtest 'init decimal128 nummerator/denominator', {
 }
 
 #-------------------------------------------------------------------------------
-subtest 'init decimal128 with Num and others', {
+subtest 'init decimal with Num and others', {
   my X $dxxx .= new(:num(1.34e4));
   is +$dxxx, 13400.0, 'Num init ok';
 
