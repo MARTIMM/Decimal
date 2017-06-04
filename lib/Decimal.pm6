@@ -1,31 +1,47 @@
 use v6;
 
-#-------------------------------------------------------------------------------
-unit package Decimal:auth<github:MARTIMM>;
+#------------------------------------------------------------------------------
+class X::Decimal is Exception {
+  has Str $!message;
+  has Str $!type;
 
-constant C-ZERO-ORD = '0'.ord;
+  #----------------------------------------------------------------------------
+  submethod BUILD ( :$!message, :$!type ) { }
 
-# Decimal 32 bits values
-#constant C--D32 = ;
+  #----------------------------------------------------------------------------
+  method message ( --> Str ) {
+    "Error: $!message, type = $!type";
+  }
+}
 
-# Decimal 64 bits values
-#constant C--D64 = ;
+#------------------------------------------------------------------------------
+package Decimal:auth<github:MARTIMM> {
 
-# Decimal 128 bits values
-constant C-BITS-D128 = 128;
-constant C-BUFLEN-D128 = 16;
-constant C-EXPCONT-D128 = 12;
-constant C-TOTEXP-D128 = 14;
-constant C-COEFCONT-D128 = 110;
-constant C-TOTCOEFDIG-D128 = 34;
-constant C-EMAX-D128 = 6144;
-constant C-EMIN-D128 = -6143;
-constant C-ELIMIT-D128 = 12287;
-constant C-BIAS-D128 = 6176;
+  constant C-ZERO-ORD = '0'.ord;
 
-#constant C--D128 = ;
+  # Decimal 32 bits values
+  #constant C--D32 = ;
 
-#-------------------------------------------------------------------------------
-enum endianness <little-endian big-endian system-endian>;
+  # Decimal 64 bits values
+  #constant C--D64 = ;
 
-our $endian = little-endian;
+  # Decimal 128 bits values
+  constant C-BITS-D128 = 128;
+  constant C-BUFLEN-D128 = 16;
+  constant C-EXPCONT-D128 = 12;
+  constant C-TOTEXP-D128 = 14;
+  constant C-COEFCONT-D128 = 110;
+  constant C-TOTCOEFDIG-D128 = 34;
+  constant C-EMAX-D128 = 6144;
+  constant C-EMIN-D128 = -6143;
+  constant C-ELIMIT-D128 = 12287;
+  constant C-BIAS-D128 = 6176;
+
+  #constant C--D128 = ;
+
+  #----------------------------------------------------------------------------
+  enum endianness <little-endian big-endian system-endian>;
+
+  our $endian = little-endian;
+
+}
