@@ -37,10 +37,12 @@ role Dxxx:auth<github:MARTIMM> {
   #----------------------------------------------------------------------------
   # FatRat initialization
   multi submethod BUILD ( FatRat:D :$number! ) {
-    #$!is-inf = $!is-nan = False;
+
     $!string = $number.Str;
     $!actions .= new;
-    my Match $m = Decimal::Grammar.parse( $!string, :rule<dxxx>, :$!actions);
+
+    # Don't have to check, just split up in pieces in $!actions
+    Decimal::Grammar.parse( $!string, :rule<dxxx>, :$!actions);
   }
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -48,7 +50,9 @@ role Dxxx:auth<github:MARTIMM> {
   multi submethod BUILD ( Rat:D :$rat! ) {
     $!string = $rat.Str;
     $!actions .= new;
-    my Match $m = Decimal::Grammar.parse( $!string, :rule<dxxx>, :$!actions);
+
+    # Don't have to check, just split up in pieces in $!actions
+    Decimal::Grammar.parse( $!string, :rule<dxxx>, :$!actions);
   }
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -57,17 +61,17 @@ role Dxxx:auth<github:MARTIMM> {
 
     $!string = $num.Str;
     $!actions .= new;
-    my Match $m = Decimal::Grammar.parse( $!string, :rule<dxxx>, :$!actions);
+
+    # Don't have to check, just split up in pieces in $!actions
+    Decimal::Grammar.parse( $!string, :rule<dxxx>, :$!actions);
   }
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # init using string
   multi submethod BUILD ( Str:D :str($!string)! ) {
-#say "SA: ", $!string.WHAT;
+
     $!actions .= new;
     my Match $m = Decimal::Grammar.parse( $!string, :rule<dxxx>, :$!actions);
-#say "SA: ", $!string.WHAT;
-#note 'M: ', $m;
 
     if ! $m.defined {
       $!string = 'NaN';
@@ -121,7 +125,6 @@ role Dxxx:auth<github:MARTIMM> {
       @bit-array.push( |map {$_ - Decimal::C-ZERO-ORD}, $b1.fmt('%04b').ords.reverse );
       @bit-array.push( |map {$_ - Decimal::C-ZERO-ORD}, $b2.fmt('%04b').ords.reverse );
       @bit-array.push( |map {$_ - Decimal::C-ZERO-ORD}, $b3.fmt('%04b').ords.reverse );
-#note "bit array $b1, $b2, $b3 for dpd:    ", @bit-array;
 
       my Int $msb-bits = 0;
       my @dense-array = ();
@@ -129,7 +132,6 @@ role Dxxx:auth<github:MARTIMM> {
       $msb-bits = (@bit-array[11] +< 2) +|        # $b3 sign -> msb
                   (@bit-array[7] +< 1) +|         # $b2 sign
                   (@bit-array[3]);                # $b1 sign
-#note "msb-bits for dpd: ", $msb-bits.fmt('%03b');
 
       # Compression: (abcd)(efgh)(ijkm) becomes (pqr)(stu)(v)(wxy)
       given $msb-bits {
@@ -184,25 +186,20 @@ role Dxxx:auth<github:MARTIMM> {
         }
       }
 
-#note 'dense array:', ' ' x 18, @dense-array;
       @dpd.push(|@dense-array);
     }
-#note 'dense array result: ', ' ' x 10, @dpd;
 
     # make multiple of 8 bits to fit bytes
     @dpd = @dpd; #.reverse;
     while ! (@dpd.elems %% 8) {
-#      @dpd.unshift(0);
       @dpd.push(0);
     }
-#note 'corrected dense array result: ', @dpd; #, ' (reversed)';
 
     $!dpd = Buf.new;
     for @dpd -> $b0, $b1, $b2, $b3, $b4, $b5, $b6, $b7 {
       $!dpd.push(:2(( $b0, $b1, $b2, $b3, $b4, $b5, $b6, $b7).reverse.join('')));
     }
 
-#note 'dpd: ', ' ' x 25, $!dpd;
     $!dpd;
   }
 
@@ -239,7 +236,6 @@ role Dxxx:auth<github:MARTIMM> {
   # Little endian of a BSD representation (BSON likes litle endian).
   # One digit per byte. This is easier to process later on
   multi method bcd8 ( Str $sn --> Buf ) {
-#note "string for bcd8: $sn";
 
     $!bcd8 .= new();
 
@@ -249,7 +245,6 @@ role Dxxx:auth<github:MARTIMM> {
       $!bcd8.push($digit);
     }
 
-#note "bcd8: ", $!bcd8;
     $!bcd8;
   }
 }

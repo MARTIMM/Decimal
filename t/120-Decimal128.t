@@ -1,6 +1,7 @@
 use v6;
 use Test;
 
+use Decimal;
 use Decimal::D128;
 
 #-------------------------------------------------------------------------------
@@ -36,13 +37,26 @@ subtest 'encode decimal128', {
   ), 'signalling NaN ok';
 }}
 
+  $d128 .= new(:str<0>);
+  $b = $d128.encode;
+  is-deeply $b, Buf.new(
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x22,
+  ), '0';
+
+  $d128 .= new(:str<0000.00000e0>);
+  $b = $d128.encode;
+  is-deeply $b, Buf.new(
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x22,
+  ), '0000.00000e0';
+
   $d128 .= new(:str<1>);
   $b = $d128.encode;
   is-deeply $b, Buf.new(
     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x22,
   ), '1';
-
 
   $d128 .= new(:str<1e-10>);
   $b = $d128.encode;
@@ -64,14 +78,31 @@ subtest 'encode decimal128', {
     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x08, 0x00,
   ), '1e-6143';
-#`{{
+
   $d128 .= new(:str('0.000000000000000000000000000000001e-6143'));
   $b = $d128.encode;
   is-deeply $b, Buf.new(
     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   ), '0.000000000000000000000000000000001e-6143';
-}}
+}
+
+#-------------------------------------------------------------------------------
+subtest 'encode exceptions', {
+  throws-like {
+    my Decimal::D128 $d128 .= new(:str<1e6145>);
+    $d128.encode;
+  }, X::Decimal, :message(/:s exponent too large/);
+
+  throws-like {
+    my Decimal::D128 $d128 .= new(:str<1e-7145>);
+    $d128.encode;
+  }, X::Decimal, :message(/:s exponent too small/);
+
+  throws-like {
+    my Decimal::D128 $d128 .= new(:str<2347652347652345762347652376452345237465>);
+    $d128.encode;
+  }, X::Decimal, :message(/:s coefficient too big/);
 }
 
 #-------------------------------------------------------------------------------

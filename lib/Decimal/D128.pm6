@@ -19,7 +19,6 @@ class D128 does Decimal::Dxxx {
   #----------------------------------------------------------------------------
   # encode to BSON binary
   multi method encode ( --> Buf ) {
-note "string and sign: $!string, ", self.dec-negative;
 
     # 34 digits precision of which one digit of 4 bits is merged into the
     # space of 3 bits and placed in the combination field together with 2 bits
@@ -72,28 +71,33 @@ note "string and sign: $!string, ", self.dec-negative;
       $adj-coefficient ~~ s/^ '0'+ //;
 
       # Check number of characters in coefficient
-      die X::Decimal.new( :message("coefficient too big"), :type<decimal128>)
-          if $adj-coefficient.chars > 34;
-note "Coeff: $adj-coefficient";
+      die X::Decimal.new(
+        :message("coefficient too big ($adj-coefficient.chars() > {Decimal::C-TOTCOEFDIG-D128}"),
+        :type<decimal128>
+      ) if $adj-coefficient.chars > Decimal::C-TOTCOEFDIG-D128;
 
 
-      # Process exponent
-      my Int $adj-exponent = -self.mantissa.chars;
+      # Process exponent and check for limits
+      my Int $adj-exponent = 0;
       if self.exp-negative {
         $adj-exponent -= self.exponent.Int;
+        die X::Decimal.new(
+        :message("exponent too small ($adj-exponent < {Decimal::C-EMIN-D128})"),
+        :type<decimal128>
+        ) if $adj-exponent < Decimal::C-EMIN-D128;
       }
 
       else {
         $adj-exponent += self.exponent.Int;
+        die X::Decimal.new(
+        :message("exponent too large ($adj-exponent > {Decimal::C-EMAX-D128})"),
+        :type<decimal128>
+        ) if $adj-exponent > Decimal::C-EMAX-D128;
       }
 
-      # Check for exponent then adjust for bias
-      die X::Decimal.new( :message("exponent too large"), :type<decimal128>)
-          if $adj-exponent > Decimal::C-EMAX-D128;
-      die X::Decimal.new( :message("exponent too small"), :type<decimal128>)
-          if $adj-exponent < Decimal::C-EMIN-D128;
+      # Adjust for bias and mantissa
+      $adj-exponent -= self.mantissa.chars;
       $adj-exponent += Decimal::C-BIAS-D128;
-note "exp: $adj-exponent";
 
 
       # Create buffer
@@ -106,7 +110,6 @@ note "exp: $adj-exponent";
       # coerse to string, somehow in the process it became IntStr
       self.bcd8($adj-coefficient);
       self.bcd2dpd;
-note 'dpd: ', $!dpd;
 
       # Copy 13 bytes and 6 bits into the result, a total of 110 bits for
       # 33 dpd digits
@@ -118,29 +121,24 @@ note 'dpd: ', $!dpd;
       # which must go to the combination bits. on these 2 bits, the exponent
       # must start.
       $!internal[13] +&= 0x3f;
-note "I 0: ", $!internal;
 
       # Set sign bit
       my Int $c = self.dec-negative ?? 0x80 !! 0x00;
-note "c 0: ", $c.fmt('0b%08b');
 
       # Get the 34th digit and copy to combination bits. Position the bits to
       # the spot where it should come in the combination field.(take
       # the location in the internal last byte into account).
       $c +|= ($!dpd[13] +& 0xc0) +> 4;
       $c +|= (($!dpd[14] +& 0x03) +< 4);
-note "c 1: ", $c.fmt('0b%08b');
 
       # If 34th digit larger than 7 then the bit at 0x20 is set. if so,
       # bit at 0x40 must be set too.
       $c +|= 0x40 if $c +& 0x20;
-note "c 2: ", $c.fmt('0b%08b');
 
 
       # Get the exponent and copy 2 MSBits of it to the combination field
-note "e: $adj-exponent, ", $adj-exponent.fmt('0x%04x');
       my $two-msb = $adj-exponent +& 0x3000;
-note "e 2msb: ", $two-msb.fmt('0x%04x');
+
       # place at x-es in s11xxe if 34th digit > 7
       if $c +& 0x20 {
         $c +|= ($two-msb +> 9);
@@ -150,21 +148,17 @@ note "e 2msb: ", $two-msb.fmt('0x%04x');
       else {
         $c +|= ($two-msb +> 7);
       }
-note "c 3: ", $c.fmt('0b%08b');
 
       # copy component into the result
       $!internal[15] +|= $c;
-note "I 1: ", $!internal;
 
       # copy the rest of the exponent
       # next two MSbits of exponent in first byte, then a byte, then last 2bits
       $!internal[15] +|= (($adj-exponent +& 0x0c00) +> 10);
       $!internal[14] +|= (($adj-exponent +& 0x03fc) +> 2);
       $!internal[13] +|= (($adj-exponent +& 0x0003) +< 6);
-note "I 2: ", $!internal;
     }
 
-#note "I n: ", $!internal;
     $!internal;
   }
 
