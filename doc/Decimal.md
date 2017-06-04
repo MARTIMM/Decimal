@@ -100,13 +100,14 @@ The following numbers have the same precision `1`, `0.1`, `0.001`, `1e1` etc.
 as well as `101`, `1.01` or `0.000101e-10`
 Different are `1` and `10` or `1e1` and `10`.
 
-| n    | char | adj char | mantissa | adj mant | precision | exponent | adj exp |
-|------|------|----------|----------|----------|-----------|----------|---------|
-| 1001 | 1001 | | | | 4 | 0 | 0 |
-| 0.0012 | | 12 | 0012 | | 2 | 0 | -4 |
-| 11.02 | 11 | 1102 | 02 | | 4 | 0 | 2 |
-| 100 | 100 | 100 | | | 3 | 0 | 0 |
-| 1.02e2 | 1 | 102 | 02 | | 3 | 2 | 0 |
+| n    | char | adj char | mantissa | precision | exponent | adj exp |
+|------|------|----------|----------|-----------|----------|---------|
+| 1001 | 1001 | | | 4 | 0 | 0 |
+| 0.0012 | | 12 | 0012 | 2 | 0 | -4 |
+| 11.02 | 11 | 1102 | 02 | 4 | 0 | -2 |
+| 100 | 100 | 100 | | 3 | 0 | 0 |
+| 1.02e2 | 1 | 102 | 02 | 3 | 2 | 0 |
+| -23.03e-2 | 23 | 2303 | 03 | 4 | -2 | -4 |
 
 
 [mdb]: https://github.com/mongodb/specifications/blob/master/source/bson-decimal128/decimal128.rst
