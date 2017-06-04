@@ -5,8 +5,9 @@ It is difficult to find any test layouts to see if the encoding is done right. F
 Much information is found about how to procede;
 * [From MongoDB][mdb]
 * [Decimal implementation and libraries][spelotrove]
-* [Wiki DPD howto][wiki]
+* [Wiki Densely Packed Decimal][wiki]
 * [The "Decimal Floating Point C Library" User's Guide][libdpd]
+* [Extension for the programming language C to support decimal floating-point arithmetic][open-std]
 
 ### Densely packed decimal encoding rules
 
@@ -111,6 +112,7 @@ Different are `1` and `10` or `1e1` and `10`.
 
 
 [mdb]: https://github.com/mongodb/specifications/blob/master/source/bson-decimal128/decimal128.rst
+[open-std]: http://www.open-std.org/JTC1/SC22/wg14/www/docs/n1312.pdf
 [spelotrove]: http://speleotrove.com/decimal/
 [wiki]: https://en.wikipedia.org/wiki/Densely_packed_decimal
 [libdpd]: https://raw.githubusercontent.com/libdfp/libdfp/master/README.user
