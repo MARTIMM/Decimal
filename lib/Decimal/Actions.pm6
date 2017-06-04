@@ -30,16 +30,8 @@ class Actions {
   }
 
   #----------------------------------------------------------------------------
-  method decimal-part ( Match $m ) {
-  }
-
-  #----------------------------------------------------------------------------
-  method exponent-part ( Match $m ) {
-  }
-
-  #----------------------------------------------------------------------------
   method numeric-string ( Match $m ) {
-#note $m;
+
     $!dec-negative = ~($m<sign> // '') eq '-';
     $!characteristic = ~($m<numeric-value><decimal-part><characteristic> // '');
     $!mantissa = ~($m<numeric-value><decimal-part><mantissa> // '');
@@ -54,10 +46,5 @@ class Actions {
 
     # remove trailing zeros from mantissa
     $!mantissa ~~ s/ '0'+ $//;
-
-#say 'ds: ', ~($m<sign> // '') eq '-';
-note "\nV: $!dec-negative, $!characteristic, $!mantissa, $!is-nan, ",
-     "$!is-inf, $!exp-negative, $!exponent";
-
   }
 }
