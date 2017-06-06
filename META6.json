@@ -3,8 +3,10 @@
     "Marcel Timmerman"
   ],
   "depends": [
-    "Test::META"
   ],
+  "test-depends": [
+    "Test::META"
+  ]
   "description": "Decimal encoding as densely packed decimal",
   "license": "Artistic-2.0",
   "name": "Decimal",
@@ -17,5 +19,5 @@
   },
   "source-url": "git://github.com/MARTIMM/Decimal.git",
   "perl": "6",
-  "version": "0.2.0"
+  "version": "0.3.1"
 }
