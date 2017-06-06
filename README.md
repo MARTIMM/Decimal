@@ -21,6 +21,7 @@ Implements Densely Packed Decimal (**DPD**) for 128 bit Decimal types. Future ma
 * [Wiki DPD howto][wiki2]
 * [Decimal implementation and libraries at spelotrove][spelotrove1]
 * [The "Decimal Floating Point C Library" User's Guide][clib1]
+* [Distributing Helper Libraries With Perl 6 Modules][helper libs]
 
 ### Markdown
 
@@ -52,3 +53,5 @@ Marcel Timmerman (MARTIMM on github)
 [wiki2]: https://en.wikipedia.org/wiki/Densely_packed_decimal
 [spelotrove1]: http://speleotrove.com/decimal/
 [clib1]: https://raw.githubusercontent.com/libdfp/libdfp/master/README.user
+
+[helper libs]: https://hoelz.ro/blog/distributing-helper-libraries-with-perl6-modules
