@@ -6,7 +6,7 @@
   ],
   "test-depends": [
     "Test::META"
-  ]
+  ],
   "description": "Decimal encoding as densely packed decimal",
   "license": "Artistic-2.0",
   "name": "Decimal",
