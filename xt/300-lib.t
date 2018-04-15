@@ -41,6 +41,10 @@ class decContext is repr('CStruct') {
   method new {
     self.bless( :traps(0), :digits(DECNUMDIGITS), :round(DEC_ROUND_HALF_EVEN));
   }
+
+  method showContext ( ) {
+    note "\nDigits: $!digits";
+  }
 }
 
 class decNumber is repr('CStruct') {
@@ -53,28 +57,40 @@ class decNumber is repr('CStruct') {
   method new {
     self.bless(:lsu(0x0000 xx DECNUMUNITS));
   }
+
+  method showNumber ( ) {
+    note "\nDigits: $!digits";
+    note "Exponent: $!exponent";
+    note "bits: $!bits";
+  }
 }
 
 class decimal128 is repr('CStruct') {
-  has CArray $!bytes;               #/* decimal128: 1, 5, 12, 110 bits*/
 
-  method new {
-    self.bless(:bytes(0x0000 xx DECIMAL128_Bytes));
+  #/* decimal128: 1, 5, 12, 110 bits*/
+  has CArray[uint8] $!bytes;
+
+  submethod BUILD {
+    $!bytes := CArray[uint8].new(0 xx DECIMAL128_Bytes);
   }
 
-  method bytes ( --> CArray ) { $!bytes }
+  method bytes ( --> Buf ) {
+    my Buf $b .= new;
+    loop ( my $i = 0; $i < DECIMAL128_Bytes; $i++) {
+      say "$i, $!bytes[$i]";
+      $b.push($!bytes[$i]);
+    }
+
+    $b;
+  }
 }
 
 sub decNumberFromString (
-  decNumber is rw,
-  Str is encoded('utf8'),
-  decContext
+  decNumber is rw, Str is encoded('utf8'), decContext is rw
 ) returns Pointer is native(DFPAL) { * }
 
 sub decimal128FromNumber(
-  decimal128 is rw,
-  decNumber,
-  decContext
+  decimal128 is rw, decNumber is rw, decContext is rw
 ) returns Pointer is native(DFPAL) { * }
 
 #-------------------------------------------------------------------------------
@@ -86,7 +102,10 @@ subtest 'lib access', {
   decNumberFromString( $dn, '1', $dc);
   decimal128FromNumber( $d128, $dn, $dc);
 
-  note "\nN=1: ", $d128.bytes;
+  $dc.showContext;
+  $dn.showNumber;
+
+  note "N=1: ", $d128.bytes;
 
   say "dn: ", $dn.perl;
   say "$d128: ", $d128.perl;
