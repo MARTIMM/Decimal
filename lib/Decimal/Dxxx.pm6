@@ -1,13 +1,13 @@
 use v6;
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 unit package Decimal:auth<github:MARTIMM>;
 
 use Decimal;
 use Decimal::Actions;
 use Decimal::Grammar;
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 role Dxxx:auth<github:MARTIMM> {
 
   has Buf $.internal .= new( 0x00 xx 16 );
@@ -22,19 +22,19 @@ role Dxxx:auth<github:MARTIMM> {
         exponent exp-negative
       >;
 
-  #----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   # FatRat initialization
   multi submethod new ( $n, $d ) {
     self.bless(:number(FatRat.new( $n, $d)));
   }
 
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # other specialized initializations
   multi submethod new ( |c ) {
     self.bless(|c);
   }
 
-  #----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   # FatRat initialization
   multi submethod BUILD ( FatRat:D :$number! ) {
 
@@ -45,7 +45,7 @@ role Dxxx:auth<github:MARTIMM> {
     Decimal::Grammar.parse( $!string, :rule<dxxx>, :$!actions);
   }
 
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # init using Rat
   multi submethod BUILD ( Rat:D :$rat! ) {
     $!string = $rat.Str;
@@ -55,7 +55,7 @@ role Dxxx:auth<github:MARTIMM> {
     Decimal::Grammar.parse( $!string, :rule<dxxx>, :$!actions);
   }
 
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # init using Num. it is possible to define Inf and NaN with Num.
   multi submethod BUILD ( Num:D :$num! ) {
 
@@ -66,7 +66,7 @@ role Dxxx:auth<github:MARTIMM> {
     Decimal::Grammar.parse( $!string, :rule<dxxx>, :$!actions);
   }
 
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # init using string
   multi submethod BUILD ( Str:D :str($!string)! ) {
 
@@ -81,19 +81,19 @@ role Dxxx:auth<github:MARTIMM> {
     }
   }
 
-  #----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   # return string representation for string concatenation
   method Str ( --> Str ) {
     $!string;
   }
 
-  #----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   # return string representation for string concatenation
   method Bool ( --> Bool ) {
     self.defined and $!string !~~ m/^ 'NaN' || '0' $/;
   }
 
-  #----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   # return a number when requeste for calculations
   method Numeric ( --> Numeric ) {
 
@@ -103,7 +103,7 @@ role Dxxx:auth<github:MARTIMM> {
     $s.FatRat;
   }
 
-  #----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   # compress BCD to Densely Packed Decimal
   method bcd2dpd( Buf $bcd8? --> Buf ) {
 
@@ -203,12 +203,12 @@ role Dxxx:auth<github:MARTIMM> {
     $!dpd;
   }
 
-  #----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   multi method bcd ( Int $n --> Buf ) {
     self.bcd($n.Str);
   }
 
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Little endian of a BSD representation (BSON likes litle endian)
   multi method bcd ( Str $sn --> Buf ) {
 
@@ -227,12 +227,12 @@ role Dxxx:auth<github:MARTIMM> {
     $!bcd;
   }
 
-  #----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   multi method bcd8 ( Int $n --> Buf ) {
     self.bcd8($n.Str);
   }
 
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Little endian of a BSD representation (BSON likes litle endian).
   # One digit per byte. This is easier to process later on
   multi method bcd8 ( Str $sn --> Buf ) {
